@@ -1,0 +1,80 @@
+image:
+  repository: "mintplexlabs/anythingllm"
+  tag: "latest"
+  pullPolicy: Always
+
+replicas: 1
+
+containerPort: 3001 
+
+strategy: RollingUpdate
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "200Mi"
+  limits:
+    cpu: 5000m
+    memory: "10Gi"
+
+
+probe:
+  enabled: false
+
+livenessProbe:
+  enabled: false
+
+secretEnabled: false
+podDisruptionBudgetEnabled: true
+spreadAcrossNodes: false
+nodePortEnabled: false
+
+monitor:
+  enabled: false
+
+vars:
+  OLLAMA_BASE_PATH: "http://ollama:11434"
+  LLM_PROVIDER: "ollama"
+  EMBEDDING_MODEL_PREF: "nomic-embed-text"
+  DISABLE_TELEMETRY: true
+  LOCAL_AI_BASE_PATH: "http://195.114.30.145:8080/v1"
+  LOCAL_AI_MODEL_PREF: "mistral-openorca"
+  LOCAL_AI_MODEL_TOKEN_LIMIT: "16384"
+  OLLAMA_MODEL_PREF: "llama3"
+  OLLAMA_MODEL_TOKEN_LIMIT: "4096"
+  EMBEDDING_ENGINE: "ollama"
+  EMBEDDING_BASE_PATH: http://ollama:11434
+  EMBEDDING_MODEL_MAX_CHUNK_LENGTH: "16384"
+  VECTOR_DB: "chroma"
+  CHROMA_ENDPOINT: "http://chroma-db-chromadb:8000"
+  JWT_SECRET: "268de449-24b1-47b4-a0c0-512b41a52997"
+  STORAGE_DIR: "/app/server/storage"
+
+
+volumes:
+  - name: storage
+    path: /app/server/storage
+    size: 5Gi
+    storageClass: retain-class
+  - name: hotdir
+    path: /app/collector/hotdir
+    size: 5Gi
+    storageClass: retain-class
+  - name: outputs
+    path: /app/collector/outputs
+    size: 5Gi
+    storageClass: retain-class
+
+ingress:
+  annotations:  
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" 
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m" 
+  host: anythingllm.mycompany.domains.leaf.cloud
+  tlsEnabled: true
+  ingressClassName: nginx
+
+ports:
+  - name: ollama
+    containerPort: 3001
+    protocol: TCP

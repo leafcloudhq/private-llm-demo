@@ -1,0 +1,72 @@
+repositories:
+  - name: nginx-stable
+    url: https://helm.nginx.com/stable
+  - name: jetstack
+    url: https://charts.jetstack.io
+  - name: chroma 
+    url: https://amikos-tech.github.io/chromadb-chart/
+  - name: ollama
+    url: https://otwld.github.io/ollama-helm/
+  - name: onechart
+    url: https://chart.onechart.dev
+
+releases:
+  - name: nginx
+    namespace: nginx-ingress
+    chart: ingress-nginx/ingress-nginx
+    labels:
+      app: nginx
+    createNamespace: true
+    version: "4.10.1"
+
+  - name: utils
+    namespace: default
+    chart: ./utils-chart
+    createNamespace: true
+    version: "0.1.0"
+  
+  - name: cert-manager
+    namespace: cert-manager
+    createNamespace: true
+    chart: jetstack/cert-manager
+    version: v1.14.5
+    values:
+      - installCRDs: true
+  
+  - name: chroma-db
+    namespace: anything-llm
+    createNamespace: true
+    chart: chroma/chromadb
+    version: v0.1.19
+    values:
+      - chromadb:
+          auth:
+            enabled: false
+          dataVolumeSize: "10Gi"
+        service:
+          type: "ClusterIP"
+
+  - name: ollama
+    namespace: anything-llm
+    chart: ollama-helm/ollama
+    labels:
+      app: ollama
+    createNamespace: true
+    version: "0.29.1"
+    values: [ "./ollama.yaml" ]
+       
+  - name: anything-llm
+    namespace: anything-llm
+    chart: onechart/onechart
+    labels:
+      app: anything-llm
+    createNamespace: true
+    version: "0.67.0"
+    needs:
+      - anything-llm/ollama
+      - anything-llm/chroma-db
+      - cert-manager/cert-manager
+      - nginx-ingress/nginx
+    values: [ "./anythingllm.yaml" ]
+
+

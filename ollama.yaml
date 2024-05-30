@@ -1,0 +1,51 @@
+ollama:
+  gpu:
+    enabled: true
+    models:
+    - llama3
+persistentVolume:
+  enabled: true
+  size: 100Gi
+
+replicaCount: 2
+
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 1
+
+resources:
+  requests: 
+    memory: 4096Mi
+    cpu: 2000m
+
+  # -- Pod limit
+  limits: 
+    memory: 14920Mi
+    cpu: 4000m
+
+extraEnv:
+  - name: OLLAMA_NUM_PARALLEL
+    value: "3"
+  - name: OLLAMA_MAX_LOADED_MODELS
+    value: "3"
+
+ingress:
+  annotations:  
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" 
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/auth-secret: "basic-auth"
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+  enabled: true
+  tls:
+  - secretName: ollama-tls
+    hosts:
+    - ollama.mycompany.domains.leaf.cloud
+  className: nginx
+  hosts:
+  - host: ollama.mycompany.domains.leaf.cloud
+    paths:
+    - path: /
+      pathType: Prefix
