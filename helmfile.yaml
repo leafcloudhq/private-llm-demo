@@ -32,19 +32,6 @@ releases:
     version: v1.14.5
     values:
       - installCRDs: true
-  
-  - name: chroma-db
-    namespace: anything-llm
-    createNamespace: true
-    chart: chroma/chromadb
-    version: v0.1.19
-    values:
-      - chromadb:
-          auth:
-            enabled: false
-          dataVolumeSize: "10Gi"
-        service:
-          type: "ClusterIP"
 
   - name: ollama
     namespace: anything-llm
@@ -54,19 +41,18 @@ releases:
     createNamespace: true
     version: "1.4.0"
     values: [ "./ollama.yaml" ]
-       
-  - name: anything-llm
+  
+  - name: openweb-ui
     namespace: anything-llm
     chart: onechart/onechart
     labels:
-      app: anything-llm
+      app: openweb-ui
     createNamespace: true
     version: "0.67.0"
     needs:
       - anything-llm/ollama
-      - anything-llm/chroma-db
       - cert-manager/cert-manager
       - nginx-ingress/nginx
-    values: [ "./anythingllm.yaml" ]
+    values: [ "./openwebui.yaml" ]
 
 

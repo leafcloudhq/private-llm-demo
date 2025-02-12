@@ -7,7 +7,7 @@ persistentVolume:
   enabled: true
   size: 100Gi
 
-replicaCount: 2
+replicaCount: 1
 
 updateStrategy:
   type: RollingUpdate
@@ -19,11 +19,8 @@ resources:
   requests: 
     memory: 4096Mi
     cpu: 2000m
-
-  # -- Pod limit
-  limits: 
-    memory: 14920Mi
-    cpu: 4000m
+    nvidia.com/gpu: 1
+  
 
 extraEnv:
   - name: OLLAMA_NUM_PARALLEL
