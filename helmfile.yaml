@@ -52,7 +52,7 @@ releases:
     labels:
       app: ollama
     createNamespace: true
-    version: "0.29.1"
+    version: "1.4.0"
     values: [ "./ollama.yaml" ]
        
   - name: anything-llm

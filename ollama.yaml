@@ -30,22 +30,3 @@ extraEnv:
     value: "3"
   - name: OLLAMA_MAX_LOADED_MODELS
     value: "3"
-
-ingress:
-  annotations:  
-    cert-manager.io/cluster-issuer: "letsencrypt-prod" 
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/auth-type: "basic"
-    nginx.ingress.kubernetes.io/auth-secret: "basic-auth"
-    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
-  enabled: true
-  tls:
-  - secretName: ollama-tls
-    hosts:
-    - ollama.mycompany.domains.leaf.cloud
-  className: nginx
-  hosts:
-  - host: ollama.mycompany.domains.leaf.cloud
-    paths:
-    - path: /
-      pathType: Prefix
